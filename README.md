@@ -1,2 +1,2 @@
 # cses
-My CSESsolutions
+My CSES solutions
