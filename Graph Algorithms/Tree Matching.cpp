@@ -20,7 +20,6 @@ void solve(int node, int parent) {
 	dp[node][0] = dp[node][1] = 0;
 	
 	bool leaf = true;
-	
 	for(int i = 0; i < graph[node].size(); i++) {
 		if(graph[node][i] != parent) {
 			leaf = false;
@@ -29,17 +28,14 @@ void solve(int node, int parent) {
 	}
 	if(leaf) return;
 	
+	int sum = 0;
 	for(int i = 0; i < graph[node].size(); i++) {
 		if(graph[node][i] != parent) {
 			arr.PB(max(dp[graph[node][i]][0], dp[graph[node][i]][1]));
+			sum += arr[arr.size()-1];
 		}
 	}
-	int sum = 0;
-	for(int i = 0; i < arr.size(); i++) {
-		sum += arr[i];
-	}
-	
-	
+		
 	// do not take an edge from node to one of his children
 	dp[node][0] = sum;
 	
@@ -47,7 +43,7 @@ void solve(int node, int parent) {
 	for(int i = 0; i < graph[node].size(); i++) {
 		if(graph[node][i] == parent) continue;
 		
-		dp[node][1] = max(dp[node][1], 1 + dp[graph[node][c]][0] + sum - arr[c]);
+		dp[node][1] = max(dp[node][1], 1 + dp[graph[node][i]][0] + sum - arr[c]);
 		c++;
 	}
 }
