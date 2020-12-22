@@ -48,21 +48,28 @@ int main(){
 		
 		ll distance = *it1 - *it0;
 		auto it_del_distance = distances.lower_bound(distance);
-		it_del_distance--;
+//		cout<<"to delete"<<*it_del_distance<<endl;
+		distances.erase(it_del_distance);
 		
 		distances.insert(p - *it0);
 		distances.insert(*it1 - p);
-		cout<<"add "<<p - *it0<<" "<<*it1 - p<<endl;
+//		cout<<"add "<<p - *it0<<" "<<*it1 - p<<endl;
 		
-		cout<<"to delete"<<*it1 - *it0<<endl;
-		auto it_del = distances.lower_bound(*it1 - *it0);
-		it_del--;
-		distances.erase(it_del);
+		
 		traffics.insert(p);
 		
 		auto ans = distances.end();
 		ans--;
-		cout<<*ans<<endl;
+		cout<<*ans<<" "<<endl;
+		
+//		multiset<ll>::iterator it;
+//		cout<<"traffics = ";
+//		for (it=traffics.begin(); it!=traffics.end(); ++it)
+//    			cout << ' ' << *it; cout << '\n';
+//    			
+//		cout<<"distances = ";
+//		for (it=distances.begin(); it!=distances.end(); ++it)
+//    			cout << ' ' << *it; cout << '\n';
 		
 	}
 	return 0;
