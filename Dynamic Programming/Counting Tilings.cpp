@@ -12,11 +12,11 @@ using namespace std;
 
 ll MOD = 1e9+7;
 int n, m;
-ll memo[1001][1<<11];
+ll memo[1002][1<<11];
 
 void generate_next_masks(int mask, int index, int next_mask, vector<int>& next_masks) {
 //	cout<<"index "<<index<<endl;
-	if(index == n) {
+	if(index == n+1) {
 		next_masks.PB(next_mask);
 		return;
 	}
@@ -31,7 +31,7 @@ void generate_next_masks(int mask, int index, int next_mask, vector<int>& next_m
 		generate_next_masks(mask, index+1, next_mask + (1<<index), next_masks);
 	}
 	
-	if(index != n-1 && (mask & (1<<index)) == 0 && (mask & (1<<(index+1))) == 0) { // we fill it vertically
+	if(index != n && (mask & (1<<index)) == 0 && (mask & (1<<(index+1))) == 0) { // we fill it vertically
 							// & no need to update next_mask
 		generate_next_masks(mask, index+2, next_mask, next_masks);
 	}
@@ -49,7 +49,7 @@ ll dp(int col, int mask) {
 	
 	// generate next masks based on the current mask
 	vector<int> next_masks;
-	generate_next_masks(mask, 0, 0, next_masks);
+	generate_next_masks(mask, 1, 0, next_masks);
 	
 	ll ans = 0;
 	for(int next_mask : next_masks) {
