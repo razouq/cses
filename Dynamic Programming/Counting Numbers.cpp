@@ -10,34 +10,26 @@
 
 using namespace std;
 
-ll memo[10][20];
+ll memo[10][20][2][2];
 
-ll dp(int last, int index, string s) {
-	if(memo[last-'0'][index] != -1) return memo[last-'0'][index];
+ll dp(char last, int index, string s, bool mx, bool leading_zero) {
+	if(index == s.size()) return 1;
 	
-	// base case
-	if(index == s.size() - 1) {
-		ll ans = 0;
-		for(char i = '0'; i <= '9'; i++) {
-			if((last != i || s.size()==1) && i <= s[index]) {
-				cout<<i<<", "<<s[index]<<endl;
-				ans ++;
-			}
-		}
-		memo[last-'0'][index] = ans;
-		return ans;
-	}
+	if(memo[last-'0'][index][mx][leading_zero] != -1) return memo[last-'0'][index][mx][leading_zero];
+	
+	char from = '0';
+	char to = mx ? s[index] : '9';
 		
 	ll ans = 0;
-	for(char i = '0'; i <= '9'; i++) {
-		if(index == 0 || (last != i && i <= s[index])) {
+	for(char i = from; i <= to; i++) {
+		if(last != i || leading_zero) {
 //			cout<<"i = "<<i<<endl;
-			ans += dp(i, index+1, s);
+			ans += dp(i, index+1, s, mx && i == s[index], leading_zero && i == '0');
 		}
 	}
 	
-	memo[last-'0'][index] = ans;
-	cout<<ans<<endl;
+	memo[last-'0'][index][mx][leading_zero] = ans;
+//	cout<<ans<<endl;
 	
 	return ans;
 }
@@ -52,9 +44,12 @@ int main(){
 	cin>>a>>b;
 	
 	memset(memo, -1, sizeof memo);
-	cout<<"b = "<<dp('0', 0, to_string(b))<<endl;
+	ll res1 = dp('0', 0, to_string(b), true, true);
+//	cout<<"b = "<<res1<<endl;
 	memset(memo, -1, sizeof memo);
-	cout<<"a = "<<dp('0', 0, to_string(a))<<endl;
+	ll res2 = dp('0', 0, to_string(a-1), true, true);
+//	cout<<"a = "<<res2<<endl;
+	cout<<res1 - res2<<endl;
 	
 	return 0;
 }
