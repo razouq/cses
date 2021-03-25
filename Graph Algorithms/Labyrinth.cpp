@@ -1,130 +1,90 @@
-#include<bits/stdc++.h>
-#ifdef ONLINE_JUDGE
- #pragma GCC optimize("O3")
-#endif
+#include "bits/stdc++.h"
+#pragma GCC optimize ("O3")
+#pragma GCC target ("sse4")
 #define ll long long
-#define ld long double
 #define ull unsigned long long
-#define uld unsigned long double
-#define ud unsigned double
-#define uf unsigned float
-#define pi 2 * acos(0.0)
-#define module cin.ignore()
-//inline long long lcm(ll a,ll b) {return a * b / __gcd(a,b);}
-//inline long long gcd(ll a,ll b) {return 1LL * b == 0 ? a : gcd(1LL*b, a * 1LL % b * 1LL);}
-inline bool IsPowerOfTwo (ull x){ return (x != 0) && ((x & (x - 1)) == 0);}
+#define F first
+#define S second
+#define PB push_back
+#define POB pop_back
+
 using namespace std;
-void READ() {
- #ifndef ONLINE_JUDGE
-   freopen("IO/Input.in", "r", stdin);
-  #endif
+
+int main(){
+//	freopen("input.in", "r", stdin);
+//	freopen("output.out", "w", stdout);
+	ios::sync_with_stdio(0);
+	cin.tie();
+	
+	int n, m;
+	cin>>n>>m;
+	
+	char grid[n][m];
+	bool visited[n][m];
+	memset(visited, false, sizeof visited);
+	pair<int, int> A, B;
+	
+	for(int i = 0; i < n; i++) {
+		for(int j = 0; j < m; j++) {
+			cin>>grid[i][j];
+			if(grid[i][j] == 'A') {
+				A = {i, j};
+			} 
+			if(grid[i][j] == 'B') {
+				B = {i, j};
+			}
+		}
+	}
+	
+	queue<pair<int, int>> q;
+	q.push(A);
+	visited[A.F][A.S] = true;
+	
+	// up, right, down, left
+	int dx[4] = {-1, 0, 1, 0};
+	int dy[4] = {0, 1, 0, -1};
+	string directions = "URDL";
+	int history[n][m];
+	
+	while(!q.empty()) {
+		pair<int, int> node = q.front();
+		q.pop();
+		
+		for(int i = 0; i < 4; i++) {
+			pair<int, int> nextNode = {node.F + dx[i], node.S + dy[i]};
+			// exclude invalide indexes
+//			cout<<nextNode.F<<" "<<nextNode.S<<" "<<(visited[nextNode.F][nextNode.S] || grid[nextNode.F][nextNode.S] == '#' || nextNode.F < 0 || nextNode.F >= n || nextNode.S < 0 || nextNode.S >= m)<<endl;
+			if(
+				visited[nextNode.F][nextNode.S] ||
+				grid[nextNode.F][nextNode.S] == '#' ||
+				nextNode.F < 0 || nextNode.F >= n || nextNode.S < 0 || nextNode.S >= m
+			) continue;
+			
+			visited[nextNode.F][nextNode.S] = true;
+			history[nextNode.F][nextNode.S] = i;
+			q.push(nextNode);
+		}
+
+		
+	}
+	if(visited[B.F][B.S]) {
+		cout<<"YES"<<endl;
+		vector<int> steps;
+		while(B != A) {
+			// p = 0, 1, 2, 3
+			int p = history[B.F][B.S];
+			steps.PB(p);
+			B = {B.F - dx[p], B.S - dy[p]};
+		}
+		cout<<steps.size()<<endl;
+		for(int i = steps.size() - 1; i >= 0; i--) {
+			cout<<directions[steps[i]];
+		} 
+		cout<<endl;
+	} else {
+		cout<<"NO"<<endl;
+	}
+	
+	return 0;
 }
-int n, m;
-char grid[1001][1001];
-pair<int, char> vis[1001][1001];
-pair<int, int>b, e;
- 
-void bfs() {
-  queue<pair<int, int>>q;
-  q.push(b);
-  vis[b.first][b.second] = {0, '*'};
- 
-  while(!q.empty()) {
-    int i = q.front().first;
-    int j = q.front().second;
-    q.pop();
- 
-    // cout << i << " " << j << endl;
-    if (i + 1 < n && grid[i + 1][j] != '#') {
-      if (vis[i + 1][j].first == INT_MAX) {
-        vis[i + 1][j] = {1 + vis[i][j].first, 'D'};
-        q.push({i + 1, j});
-      }
- 
-    }
-    if (i - 1 >= 0 && grid[i - 1][j] != '#') {
- 
-      if (vis[i - 1][j].first == INT_MAX) {
-        vis[i - 1][j] = {1 + vis[i][j].first, 'U'};
-        q.push({i - 1, j});
-      }
- 
-    }
-    if (j + 1 < m && grid[i][j + 1] != '#') {
-      if (vis[i][j + 1].first == INT_MAX) {
-        vis[i][j + 1] = {1 + vis[i][j].first, 'R'};
-        q.push({i, j + 1});
-      }
- 
-    }
-    if (j - 1 >= 0 && grid[i][j - 1] != '#') {
-      if (vis[i][j - 1].first == INT_MAX) {
-        vis[i][j - 1] = {1 + vis[i][j].first, 'L'};
-        q.push({i, j - 1});
-      }
- 
-    }
-  }
-}
-int main() {
-    // auto start = std::chrono::high_resolution_clock::now();
-    ios_base::sync_with_stdio(false);
-    cin.tie(NULL);
-    // READ();
- 
-    scanf("%d%d", &n, &m);
-    for(int i = 0; i < n; i++) {
-      scanf("%s", grid[i]);
-      for(int j = 0; j < m; ++j) {
-        if (grid[i][j] == 'A') b = {i, j};
-        if (grid[i][j] == 'B') e = {i, j};
-      }
-    }
- 
-    for(int i = 0; i < n; i++) {
-      for(int j = 0; j < m; ++j) {
-        vis[i][j] = {INT_MAX, '*'};
-      }
-    }
- 
-    bfs();
- 
-    // for(int i = 0; i < n; ++i) {
-    //   for(int j = 0; j < m; ++j) {
-    //     cout << vis[i][j].first << " ";
-    //   }
-    //   cout << endl;
-    // }
- 
-    if (vis[e.first][e.second].first == INT_MAX) printf("NO\n");
-    else {
-      printf("YES\n");
-      printf("%d\n", vis[e.first][e.second].first);
-      auto res = vis[e.first][e.second];
-      auto fin = e;
-      string path = "";
-      while(true) {
-        if (fin == b) break;
-        path += res.second;
-        // cout << fin.first << " " << fin.second << endl;
-        if (res.second == 'U') {
-          fin.first += 1;
-        } else if (res.second == 'D') {
-          fin.first -= 1;
-        } else if (res.second == 'L') {
-          fin.second += 1;
-        } else {
-          fin.second -= 1;
-        }
-        res = vis[fin.first][fin.second];
-      }
-      reverse(path.begin(), path.end());
-      printf("%s", path.c_str());
-    }
- 
-    // auto end = std::chrono::high_resolution_clock::now();
-    // auto duration = std::chrono::duration_cast<std::chrono::microseconds>( end - start ).count();
-    // cout << "Finished in " << duration << " ms" << endl;
-    return 0;
-}
- 
+
