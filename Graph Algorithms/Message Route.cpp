@@ -11,26 +11,9 @@
 using namespace std;
 
 const int max_size = 1e5+1;
-int n, m;
-pair<int, int> steps[100001];
-
-// {comming_from, steps}
 vector<int> graph[max_size];
-
-int tmp_sol = INT_MAX;
-
-void dfs(int x, int stp, int comming_from) {
-//	cout<<x<<endl;
-	if(x == n) {
-		tmp_sol = stp;
-	}
-	steps[x] = {stp, comming_from};
-	for(int i = 0; i < graph[x].size(); i++) {
-		if(steps[graph[x][i]].F > stp + 1 && stp + 1 < tmp_sol) {
-			dfs(graph[x][i], stp + 1, x);
-		}
-	}
-}
+bool visited[max_size];
+int previousNode[max_size];
 
 int main(){
 //	freopen("input.in", "r", stdin);
@@ -38,14 +21,11 @@ int main(){
 	ios::sync_with_stdio(0);
 	cin.tie();
 	
-	for(int i = 0; i < max_size; i++) {
-		steps[i].F = INT_MAX;
-		steps[i].S = INT_MAX;
-//		cout<<steps[i]<<endl;
-	}
-	
-
+	int n, m;
 	cin>>n>>m;
+	
+	memset(visited, false, sizeof visited);
+	memset(previousNode, 0, sizeof previousNode);
 	
 	for(int i = 0; i < m; i++) {
 		int a, b;
@@ -54,39 +34,39 @@ int main(){
 		graph[b].PB(a);
 	}
 	
-	dfs(1, 0, 0);
+	int start = 1;
+	int end = n;
 	
-	if(steps[n].F == INT_MAX) cout<<"IMPOSSIBLE"<<endl;
-//	if(false) cout<<"IMPOSSIBLE"<<endl;
-	else {	
-//		cout<<"----------------------------"<<endl;
-//		for(int i = 1; i <= n; i++) cout<<steps[i].F<<" "<<steps[i].S<<endl;
-//		cout<<"----------------------------"<<endl;
-//		cout<<n<<endl;
-//		cout<<steps[n].S<<endl;
-//		cout<<steps[steps[n].F].S<<endl;
+	visited[1] = true;
+	queue<int> q;
+	q.push(1);
+	previousNode[1] = 0;
+	
+	while(!q.empty()) {
+		int nbr = q.front();
+		q.pop();
 		
-		int r = n;
-		vector<int> v;
-		while(true) {
-//			cout<<r<<endl;
-			v.PB(r);
-			r = steps[r].S;
-			if(r == 0) break;
+		for(int i = 0; i < graph[nbr].size(); i++) {
+			if(!visited[graph[nbr][i]]) {
+				visited[graph[nbr][i]] = true;
+				q.push(graph[nbr][i]);
+				previousNode[graph[nbr][i]] = nbr;
+			}
 		}
-		cout<<v.size()<<endl;
-		for(int i = v.size()-1; i >= 0; i--) cout<<v[i]<<" ";
-				
-//		int k = 0;
-//		while(true) {
-//			cout<<r.F<<endl;
-//			r = steps[r.F];
-//			if(r.F == 0) break;
-//			
-//			k++;
-//			if(k == 6) break;
-//		}
 	}
+	
+	if(visited[n]) {
+		vector<int> v;
+		while(end != start) {
+			v.PB(end);
+			end = previousNode[end];
+		}
+		v.PB(start);
+		cout<<v.size()<<endl;
+		reverse(v.begin(), v.end());
+		for(int i = 0; i < v.size(); i++) cout<<v[i]<<" ";
+		cout<<endl;
+	} else cout<<"IMPOSSIBLE"<<endl;
 	
 	return 0;
 }
