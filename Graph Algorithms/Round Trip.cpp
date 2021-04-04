@@ -32,7 +32,7 @@ bool dfs(int node, int par) {
 			return true;
 		} else if(dfs(graph[node][i], node)) return true;
 	}
-	
+	return false;
 }
 
 bool hasCycle() {
@@ -42,8 +42,8 @@ bool hasCycle() {
 			// a cycle is found
 			if(dfs(i, -1)) return true;
 		}
-		return false;
 	}
+	return false;
 }
 
 
@@ -65,12 +65,13 @@ int main(){
 	if(hasCycle()) {
 		vector<int> response;
 //		cout<<"start : "<<s<<" end = "<<e<<endl;
+		int k = e;
 		response.PB(s);
-		while(s != e) {
-			response.PB(e);
-			e = parent[e];
+		while(k != s) {
+			response.PB(k);
+			k = parent[k];
 		}
-		response.PB(e);
+		response.PB(s);
 		cout<<response.size()<<endl;
 		for(int i = 0; i < response.size(); i++) {
 			cout<<response[i]<<" ";
