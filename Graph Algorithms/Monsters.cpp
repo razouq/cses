@@ -20,15 +20,18 @@ int main(){
 	cin>>n>>m;
 	
 	char grid[n][m];
-	bool visited[n][m];
-	memset(visited, false, sizeof visited);
 	pair<int, int> start;
 	vector<pair<int, int>> end;
 	
 	// read the grid and find the start
+	queue<pair<int, int>> q;
 	for(int i = 0; i < n; i++) {
 		for(int j = 0; j < m; j++) {
 			cin>>grid[i][j];
+			// add monsters first
+			if(grid[i][j] == 'M') {
+				q.push({i, j});
+			}
 			if(grid[i][j] == 'A') {
 				start = {i, j};
 			}
@@ -38,9 +41,7 @@ int main(){
 		}
 	}
 	
-	queue<pair<int, int>> q;
 	q.push(start);
-	visited[start.F][start.S] = true;
 	
 	// up, right, down, left
 	int dx[4] = {-1, 0, 1, 0};
@@ -52,29 +53,13 @@ int main(){
 		pair<int, int> node = q.front();
 		q.pop();
 		
-		for(int i = 0; i < 4; i++) {
-			pair<int, int> nextNode = {node.F + dx[i], node.S + dy[i]};
-			if(
-				visited[nextNode.F][nextNode.S] ||
-				grid[nextNode.F][nextNode.S] == '#' ||
-				grid[nextNode.F][nextNode.S] == 'M' ||
-				nextNode.F < 0 || nextNode.F >= n ||
-				nextNode.S < 0 ||nextNode.S >= m
-			) continue;
+		if(grid[node.F][node.S] == 'A' && 
+			(node.F == 0 || node.F == n-1 || node.S == 0 || node.S == m-1)) {
 			
-			visited[nextNode.F][nextNode.S] = true;
-			history[nextNode.F][nextNode.S] = i;
-			q.push(nextNode);
-		}
-	}
-	
-	bool solved = false;
-	for(pair<int, int> e : end) {
-		if(visited[e.F][e.S]) {
-			solved = true;
 			cout<<"YES"<<endl;
 			vector<int> steps;
 			
+			pair<int, int> e = node;
 			while(e != start) {
 				int p = history[e.F][e.S];
 				steps.PB(p);
@@ -86,11 +71,27 @@ int main(){
 				cout<<directions[step];
 			}
 			cout<<endl;
-			break;
+			return 0;
+		}
+		
+		for(int i = 0; i < 4; i++) {
+			pair<int, int> nextNode = {node.F + dx[i], node.S + dy[i]};
+			if(
+				grid[nextNode.F][nextNode.S] == '#' ||
+				grid[nextNode.F][nextNode.S] == 'M' ||
+				grid[nextNode.F][nextNode.S] == 'A' ||
+				nextNode.F < 0 || nextNode.F >= n ||
+				nextNode.S < 0 ||nextNode.S >= m
+			) continue;
+			
+			grid[nextNode.F][nextNode.S] = grid[node.F][node.S];
+			history[nextNode.F][nextNode.S] = i;
+			q.push(nextNode);
 		}
 	}
 	
-	if(!solved) cout<<"NO"<<endl;
+	
+	cout<<"NO"<<endl;
 	return 0;
 }
 
