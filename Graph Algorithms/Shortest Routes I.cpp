@@ -11,7 +11,7 @@
 using namespace std;
 
 vector<pair<int, ll>> grid[100001];
-
+bool vis[100001];
 ll distances[100001];
 
 int main(){
@@ -34,20 +34,24 @@ int main(){
 	
 	
 	memset(distances, -1, sizeof distances);
+	memset(vis, false, sizeof vis);
 	
-	queue<int> q;
-	q.push(1);
+	priority_queue<pair<ll, int>, vector<pair<ll, int>>, greater<pair<ll, int>>> q;
+	// {distance, node}	
+	q.push({0, 1});
 	distances[1] = 0;
 	
 	while(!q.empty()) {
-		int node = q.front();
+		pair<ll, int> node = q.top();
 		q.pop();
-		// {1, 0}
 		
-		for(int i = 0; i < grid[node].size(); i++) {
-			if(distances[grid[node][i].F] == -1 || distances[grid[node][i].F] > distances[node] + grid[node][i].S) {
-				distances[grid[node][i].F] = distances[node] + grid[node][i].S;
-				q.push(grid[node][i].F);
+		if(vis[node.S]) continue;
+		vis[node.S] = true;
+		
+		for(int i = 0; i < grid[node.S].size(); i++) {
+			if(distances[grid[node.S][i].F] == -1 || distances[grid[node.S][i].F] > distances[node.S] + grid[node.S][i].S) {
+				distances[grid[node.S][i].F] = distances[node.S] + grid[node.S][i].S;
+				q.push({distances[grid[node.S][i].F], grid[node.S][i].F});
 			}
 		}
 		
